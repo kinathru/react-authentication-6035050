@@ -2,6 +2,7 @@ const express = require('express');
 const {db, saveDb} = require('./db');
 const bcrypt = require('bcrypt');
 const {v4: uuidv4} = require('uuid');
+const jwt = require('jsonwebtoken'); // Comes from `jsonwebtoken` library to support JWT generation
 
 
 const app = express();
@@ -38,8 +39,21 @@ app.post('/api/sign-up', async (req, res) => {
 
     saveDb();
 
-    res.json({id});
+    // Create a JWT token for the created user
+    jwt.sign({
+        id,
+        email,
+        info: startingInfo,
+        isVerified: false
+    }, process.env.JWT_SECRET, {
+        expiresIn: '2d'
+    }, (err, token) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
 
+        res.json({token});
+    });
 });
 
 
