@@ -66,9 +66,8 @@ app.post('/api/log-in', async (req, res) => {
     const {email, password} = req.body;
 
     const user = db.users.find(user => user.email === email);
-    ;
     if (!user) {
-        return res.status(401);
+        res.sendStatus(401);
     }
 
     const passwordIsCorrect = await bcrypt.compare(password, user.passwordHash);

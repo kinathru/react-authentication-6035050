@@ -1,11 +1,11 @@
-import React from 'react';
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {useToken} from "./useToken.js";
 import axios from 'axios';
+import {useToken} from './useToken';
 
 export const LogInPage = () => {
     const [token, setToken] = useToken();
+
     const [errorMessage, setErrorMessage] = useState('');
 
     const [emailValue, setEmailValue] = useState('');
@@ -18,11 +18,11 @@ export const LogInPage = () => {
     const onLogInClicked = async () => {
         const response = await axios.post('/api/log-in', {
             email: emailValue,
-            password: passwordValue
+            password: passwordValue,
         });
-        const token = response.data.token;
+        const { token } = response.data;
         setToken(token);
-        navigate('/', {replace: true});
+        navigate('/', { replace: true });
     }
 
     return (
