@@ -9,6 +9,8 @@ export const UserInfoPage = () => {
     const user = useUser();
     const {id, email, info} = user; // destructuring the user object to get the id, email, and info
 
+    const [token, setToken] = useToken();
+
     // We'll use the history to navigate the user
     // programmatically later on (we're not using it yet)
     const navigate = useNavigate();
@@ -38,10 +40,21 @@ export const UserInfoPage = () => {
     }, [showSuccessMessage, showErrorMessage]);
 
     const saveChanges = async () => {
-        // Send a request to the server to
-        // update the user's info with any changes we've
-        // made to the text input values
-        alert('Save functionality not implemented yet');
+        try {
+            const response = await axios.put(`/api/users/${id}`, {
+                favoriteFood,
+                hairColor,
+                bio
+            }, {
+                headers: {Authorization: `Bearer ${token}`}
+            });
+
+            const {token: newToken} = response.data;
+            setToken(newToken);
+            setShowSuccessMessage(true);
+        } catch (error) {
+            setShowErrorMessage(true);
+        }
     }
 
     const logOut = () => {
