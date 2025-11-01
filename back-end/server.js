@@ -47,15 +47,14 @@ app.post('/api/sign-up', async (req, res) => {
 
     saveDb();
 
-    try{
+    try {
         await sendEmail({
             to: email,
             from: "kinathru@gmail.com",
             subject: "Please verify your email",
             text: `Thanks for singing up! To verify your email, please click here:  http://localhost:5174/verify-email/${verificationString}`
         });
-    }
-    catch (e){
+    } catch (e) {
         console.log(e);
         return res.sendStatus(500);
     }
@@ -122,7 +121,7 @@ app.put('/api/users/:userId', async (req, res) => {
     }
 
     const user = db.users.find(user => user.id === userId);
-    if(!user){
+    if (!user) {
         return res.sendStatus(404);
     }
 
@@ -158,6 +157,33 @@ app.put('/api/users/:userId', async (req, res) => {
             res.json({token});
         });
     });
+});
+
+// Verify email token page
+app.put('/api/verify-email', async (req, res) => {
+    const {verificationString} = req.body;
+
+    const user = db.users.find(u => u.verificationString === verificationString);
+    if (!user) {
+        return res.sendStatus(401).json({message: "Email verification code is not correct"});
+    }
+
+    user.isVerified = true;
+
+    const {id, email, info, isVerified} = user;
+    jwt.sign({
+        id, email, info, isVerified
+    }, process.env.JWT_SECRET, {
+        expiresIn: '2d'
+    }, (err, token) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+
+        res.json({token});
+    });
+
+    saveDb();
 });
 
 
