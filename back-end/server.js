@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const {v4: uuidv4} = require('uuid');
 const jwt = require('jsonwebtoken'); // Comes from `jsonwebtoken` library to support JWT generation
 const cors = require('cors');
+const {sendEmail} = require("./sendEmail");
 
 const app = express();
 const corsOptions = {
@@ -26,6 +27,7 @@ app.post('/api/sign-up', async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
+    const verificationString = uuidv4();
     const id = uuidv4();
 
     const startingInfo = {
@@ -39,10 +41,24 @@ app.post('/api/sign-up', async (req, res) => {
         email,
         passwordHash,
         info: startingInfo,
-        isVerified: false
+        isVerified: false,
+        verificationString
     });
 
     saveDb();
+
+    try{
+        await sendEmail({
+            to: email,
+            from: "kinathru@gmail.com",
+            subject: "Please verify your email",
+            text: `Thanks for singing up! To verify your email, please click here:  http://localhost:5174/verify-email/${verificationString}`
+        });
+    }
+    catch (e){
+        console.log(e);
+        return res.sendStatus(500);
+    }
 
     // Create a JWT token for the created user
     jwt.sign({
