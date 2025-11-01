@@ -1,4 +1,5 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
+import {TokenContext} from "./TokenContext";
 
 /**
  * A (custom) hook that returns a token and a function to set the token.
@@ -9,15 +10,4 @@ import {useState} from "react";
  * @returns {[string, (newToken: string) => void]} A tuple containing the current token and
  * a function to set the token.
  */
-export const useToken = ()=> {
-    const [token, setTokenInternal] = useState(()=> {
-        return localStorage.getItem('token');
-    });
-
-    const setToken = newToken => {
-        localStorage.setItem('token', newToken);
-        setTokenInternal(newToken);
-    }
-
-    return [token, setToken];
-}
+export const useToken = ()=> useContext(TokenContext);
