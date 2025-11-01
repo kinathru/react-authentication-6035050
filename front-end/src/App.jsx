@@ -4,8 +4,12 @@ import {SignUpPage} from './SignUpPage';
 import {LogInPage} from './LogInPage';
 import {UserInfoPage} from './UserInfoPage';
 import {PrivateRoute} from "./PrivateRoute.jsx";
+import {useUser} from "./useUser.js";
 
 function App() {
+
+    const user = useUser();
+
     return (
         <div className="page-container">
             <BrowserRouter>
@@ -15,7 +19,7 @@ function App() {
 
                     {/*Purpose of the private route is to redirect the user to the log-in page when the user tries to
                     access '/' path if the user is not authenticated*/}
-                    <Route element={<PrivateRoute redirectPath="log-in" isAllowed={true}/>}>
+                    <Route element={<PrivateRoute redirectPath="log-in" isAllowed={!!user}/>}>
                         <Route path="/" element={<UserInfoPage/>}/>
                     </Route>
                 </Routes>

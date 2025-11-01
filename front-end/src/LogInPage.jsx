@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useToken} from "./useToken.js";
@@ -21,7 +22,7 @@ export const LogInPage = () => {
         });
         const token = response.data.token;
         setToken(token);
-        navigate('/');
+        navigate('/', {replace: true});
     }
 
     return (
