@@ -3,9 +3,14 @@ const {db, saveDb} = require('./db');
 const bcrypt = require('bcrypt');
 const {v4: uuidv4} = require('uuid');
 const jwt = require('jsonwebtoken'); // Comes from `jsonwebtoken` library to support JWT generation
-
+const cors = require('cors');
 
 const app = express();
+const corsOptions = {
+    origin: 'http://localhost:5174'
+}
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Endpoints go here
