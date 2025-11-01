@@ -7,6 +7,7 @@ import {PrivateRoute} from "./PrivateRoute.jsx";
 import {useUser} from "./useUser.js";
 import {PleaseVerifyEmailPage} from "./PleaseVerifyEmailPage.jsx";
 import {EmailVerificationLandingPage} from "./EmailVerificationLandingPage.jsx";
+import {ForgotPasswordPage} from "./ForgotPasswordPage.jsx";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/sign-up" element={<SignUpPage/>}/>
                     <Route path="/please-verify" element={<PleaseVerifyEmailPage/>}/>
                     <Route path="/verify-email/:verificationString" element={<EmailVerificationLandingPage/>}/>
+                    <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
 
                     {/*Purpose of the private route is to redirect the user to the log-in page when the user tries to
                     access '/' path if the user is not authenticated*/}
