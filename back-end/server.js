@@ -245,4 +245,33 @@ app.get('/api/auth/google/url', (req, res) => {
     res.status(200).json({url});
 });
 
+// Google OAuth Callback URL
+// Note here we don't use /api because this is not invoked by frontend, but by Google
+app.get('/auth/google/callback', async (req, res) => {
+
+    // Get query parameters from the callback request from Google
+    const {code} = req.query;
+
+    // Get OAuth user information
+    const oauthUserInfo = {};
+
+    // Create user using the user information captured above
+    const createdUser = {};
+
+    // Get the information required for the JWT token
+    const {id, isVerified, email, info} = createdUser;
+
+    // Sign the JWT token and send to the frontend along with the redirect url.
+    jwt.sign({
+        id, email, info, isVerified
+    }, process.env.JWT_SECRET, {
+        expiresIn: '2d'
+    }, (err, token) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+
+        res.redirect(`http://localhost:5174/login?token=${token}`);
+    });
+});
 app.listen(3000, () => console.log('Server running on port 3000'));
