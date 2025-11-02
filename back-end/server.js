@@ -5,7 +5,7 @@ const {v4: uuidv4} = require('uuid');
 const jwt = require('jsonwebtoken'); // Comes from `jsonwebtoken` library to support JWT generation
 const cors = require('cors');
 const {sendEmail} = require("./sendEmail");
-const {getGoogleOAuthUrl, getGoogleUser} = require("./googleOAuthUtil");
+const {getGoogleOAuthUrl, getGoogleUser, updateOrCreateUserFromOAuth} = require("./googleOAuthUtil");
 
 const app = express();
 const corsOptions = {
@@ -256,7 +256,7 @@ app.get('/auth/google/callback', async (req, res) => {
     const oauthUserInfo = getGoogleUser(code);
 
     // Create user using the user information captured above
-    const createdUser = {};
+    const createdUser = updateOrCreateUserFromOAuth(oauthUserInfo);
 
     // Get the information required for the JWT token
     const {id, isVerified, email, info} = createdUser;

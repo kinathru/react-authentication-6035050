@@ -1,5 +1,6 @@
 const {google} = require("googleapis");
 const {axios} = require("axios");
+const {db, saveDb} = require("./db");
 
 const oauthClient = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
@@ -39,4 +40,30 @@ const getGoogleUser = async (code) => {
     return response.data;
 }
 
-module.exports = {getGoogleOAuthUrl, getGoogleUser};
+const updateOrCreateUserFromOAuth = async (oauthUserInfo) => {
+    const {
+        id: googleId,
+        verifiedEmail: isVerified,
+        email
+    } = oauthUserInfo;
+
+    const existingUser = db.users.find(u => u.email === email);
+    if (existingUser) {
+        existingUser.id = googleId;
+        existingUser.isVerified = isVerified || existingUser.isVerified;
+        saveDb();
+        return existingUser;
+    } else {
+        let newUser = {
+            email,
+            googleId,
+            isVerified,
+            info: {}
+        };
+        db.users.push(newUser);
+        saveDb();
+        return newUser;
+    }
+};
+
+module.exports = {getGoogleOAuthUrl, getGoogleUser, updateOrCreateUserFromOAuth};
