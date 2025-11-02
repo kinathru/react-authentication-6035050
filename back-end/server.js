@@ -126,6 +126,10 @@ app.put('/api/users/:userId', async (req, res) => {
         return res.sendStatus(404);
     }
 
+    if (!user.isVerified) {
+        return res.status(401).json({message: "User is not verified"});
+    }
+
     const token = authorization.split(' ')[1];
     jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
         if (err) {
