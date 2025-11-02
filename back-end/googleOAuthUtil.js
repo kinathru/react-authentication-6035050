@@ -1,4 +1,5 @@
 const {google} = require("googleapis");
+const {axios} = require("axios");
 
 const oauthClient = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
@@ -21,4 +22,21 @@ const getGoogleOAuthUrl = () => {
     );
 }
 
-module.exports = {getGoogleOAuthUrl};
+/*
+* This is a secret code here that Google gives us to prove that a user has logged into our site and, well,
+* basically agreed that we can use their data.
+*/
+const getGoogleUser = async (code) => {
+    const {tokens} = await oauthClient.getToken(code);
+    const {response} = await axios.get(
+        `https://www.googleapis.com/oauth2/v1/userInfo?alt=json&access_token=${tokens.access_token}`,
+        {
+            headers: {
+                Authorization: `Bearer ${tokens.id_token}`
+            }
+        }
+    );
+    return response.data;
+}
+
+module.exports = {getGoogleOAuthUrl, getGoogleUser};

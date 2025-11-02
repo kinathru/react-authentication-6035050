@@ -5,7 +5,7 @@ const {v4: uuidv4} = require('uuid');
 const jwt = require('jsonwebtoken'); // Comes from `jsonwebtoken` library to support JWT generation
 const cors = require('cors');
 const {sendEmail} = require("./sendEmail");
-const {getGoogleOAuthUrl} = require("./googleOAuthUtil");
+const {getGoogleOAuthUrl, getGoogleUser} = require("./googleOAuthUtil");
 
 const app = express();
 const corsOptions = {
@@ -253,7 +253,7 @@ app.get('/auth/google/callback', async (req, res) => {
     const {code} = req.query;
 
     // Get OAuth user information
-    const oauthUserInfo = {};
+    const oauthUserInfo = getGoogleUser(code);
 
     // Create user using the user information captured above
     const createdUser = {};
@@ -274,4 +274,6 @@ app.get('/auth/google/callback', async (req, res) => {
         res.redirect(`http://localhost:5174/login?token=${token}`);
     });
 });
+
+
 app.listen(3000, () => console.log('Server running on port 3000'));
