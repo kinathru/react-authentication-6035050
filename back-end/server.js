@@ -5,6 +5,7 @@ const {v4: uuidv4} = require('uuid');
 const jwt = require('jsonwebtoken'); // Comes from `jsonwebtoken` library to support JWT generation
 const cors = require('cors');
 const {sendEmail} = require("./sendEmail");
+const {getGoogleOAuthUrl} = require("./googleOAuthUtil");
 
 const app = express();
 const corsOptions = {
@@ -220,13 +221,13 @@ app.put('/api/forgot-password/:email', async (req, res) => {
 });
 
 // Reset password endpoint
-app.put('/api/users/:passwordResetCode/reset-password', async (req,res) => {
+app.put('/api/users/:passwordResetCode/reset-password', async (req, res) => {
 
     const {passwordResetCode} = req.params;
     const {newPassword} = req.body;
 
     const user = db.users.find(u => u.passwordResetCode === passwordResetCode);
-    if(!user){
+    if (!user) {
         return res.status(404).json({message: "User with password reset code not fount"});
     }
 
@@ -238,5 +239,10 @@ app.put('/api/users/:passwordResetCode/reset-password', async (req,res) => {
     return res.sendStatus(200);
 });
 
+// Google OAuth Consent
+app.get('/api/auth/google/url', (req, res) => {
+    const url = getGoogleOAuthUrl();
+    res.status(200).json({url});
+});
 
 app.listen(3000, () => console.log('Server running on port 3000'));
