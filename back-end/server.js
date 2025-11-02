@@ -219,5 +219,24 @@ app.put('/api/forgot-password/:email', async (req, res) => {
     }
 });
 
+// Reset password endpoint
+app.put('/api/users/:passwordResetCode/reset-password', async (req,res) => {
+
+    const {passwordResetCode} = req.params;
+    const {newPassword} = req.body;
+
+    const user = db.users.find(u => u.passwordResetCode === passwordResetCode);
+    if(!user){
+        return res.status(404).json({message: "User with password reset code not fount"});
+    }
+
+    user.passwordHash = await bcrypt.hash(newPassword, 10);
+    delete user.passwordResetCode;
+
+    saveDb();
+
+    return res.sendStatus(200);
+});
+
 
 app.listen(3000, () => console.log('Server running on port 3000'));

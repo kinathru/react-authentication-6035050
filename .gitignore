@@ -3,4 +3,5 @@ node_modules
 .tmp
 npm-debug.log
 .idea/
-sendgrid.env
+back-end/sendgrid.env
+back-end/google.env
