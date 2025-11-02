@@ -253,10 +253,10 @@ app.get('/auth/google/callback', async (req, res) => {
     const {code} = req.query;
 
     // Get OAuth user information
-    const oauthUserInfo = getGoogleUser(code);
+    const oauthUserInfo = await getGoogleUser(code);
 
     // Create user using the user information captured above
-    const createdUser = updateOrCreateUserFromOAuth(oauthUserInfo);
+    const createdUser = await updateOrCreateUserFromOAuth(oauthUserInfo);
 
     // Get the information required for the JWT token
     const {id, isVerified, email, info} = createdUser;
@@ -271,7 +271,7 @@ app.get('/auth/google/callback', async (req, res) => {
             return res.status(500).send(err);
         }
 
-        res.redirect(`http://localhost:5174/login?token=${token}`);
+        res.redirect(`http://localhost:5174/log-in?token=${token}`);
     });
 });
 

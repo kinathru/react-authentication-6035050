@@ -1,5 +1,5 @@
 const {google} = require("googleapis");
-const {axios} = require("axios");
+const axios = require('axios');
 const {db, saveDb} = require("./db");
 
 const oauthClient = new google.auth.OAuth2(
@@ -29,8 +29,9 @@ const getGoogleOAuthUrl = () => {
 */
 const getGoogleUser = async (code) => {
     const {tokens} = await oauthClient.getToken(code);
-    const {response} = await axios.get(
-        `https://www.googleapis.com/oauth2/v1/userInfo?alt=json&access_token=${tokens.access_token}`,
+    let url = `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokens.access_token}`;
+    const response = await axios.get(
+        url,
         {
             headers: {
                 Authorization: `Bearer ${tokens.id_token}`
@@ -56,8 +57,8 @@ const updateOrCreateUserFromOAuth = async (oauthUserInfo) => {
     } else {
         let newUser = {
             email,
-            googleId,
-            isVerified,
+            id: googleId,
+            isVerified: true,
             info: {}
         };
         db.users.push(newUser);
